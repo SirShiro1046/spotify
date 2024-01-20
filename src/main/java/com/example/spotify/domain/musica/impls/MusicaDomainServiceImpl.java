@@ -13,14 +13,12 @@ import java.util.List;
 public class MusicaDomainServiceImpl implements IMusicaDomainService {
     private LeerFuncional leerFuncional = new LeerFuncional();
     @Override
-    public List<Musica> primerosDiez() {
+    public List<Musica> findAllMusica() {
         log.info("Obteniendo primeras diez canciones");
         List<Musica> musicaList = new ArrayList<Musica>();
         leerFuncional.getMusicas().stream()
-                .limit(10)
                 .forEach(musica-> musicaList.add(musica));
         return musicaList;
     }
-
 
 }

@@ -4,5 +4,5 @@ import com.example.spotify.persistence.entities.Musica;
 import java.util.List;
 
 public interface IMusicaDomainService {
-    List<Musica> primerosDiez();
+    List<Musica> findAllMusica();
 }
