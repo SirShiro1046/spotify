@@ -30,7 +30,7 @@ public class MusicaController {
 
     @GetMapping("/artist/{artist}")
     public ResponseEntity<List<Musica>> findAllMusicaByArtist(@PathVariable String artist){
-        log.info("Obteniendo todas las canciones de un artista");
+        log.info("Buscando todas las canciones de un artista [{}]", artist);
         return Optional
                .of(iMusicaDomainService.findAllMusicaByArtist(artist))
                .map(ResponseEntity::ok)
@@ -53,5 +53,18 @@ public class MusicaController {
                 .map(ResponseEntity::ok)
                 .orElseGet(ResponseEntity.notFound()::build);
     }
-
+    @GetMapping("/total")
+    public ResponseEntity<Integer> findNumberTotalMusica() {
+        log.info("Obteniendo el total de canciones");
+        return iMusicaDomainService.findNumberTotalMusica()
+                .map(ResponseEntity::ok)
+                .orElseGet(ResponseEntity.notFound()::build);
+    }
+    @GetMapping("/total/{name}")
+    public ResponseEntity<Integer> findNumberTotalMusicaByArtist(@PathVariable String name) {
+        log.info("Obteniendo el total de canciones por artista: [{}]", name);
+        return iMusicaDomainService.findNumberTotalMusicaByArtist(name)
+               .map(ResponseEntity::ok)
+               .orElseGet(ResponseEntity.notFound()::build);
+    }
 }

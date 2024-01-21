@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 @Service
 @Log4j2
 public class MusicaDomainServiceImpl implements IMusicaDomainService {
-    private LeerFuncional leerFuncional = new LeerFuncional();
+    private final LeerFuncional leerFuncional = new LeerFuncional();
     @Override
     public List<Musica> findAllMusica() {
         log.info("Obteniendo primeras diez canciones");
@@ -23,8 +23,7 @@ public class MusicaDomainServiceImpl implements IMusicaDomainService {
 
     @Override
     public List<Musica> findAllMusicaByArtist(String artist) {
-        log.info("Buscando canciones por artista: [{}]", artist);
-
+        log.info("Buscando todas las canciones de un artista [{}]", artist);
         return leerFuncional.getMusicas()
                 .stream()
                 .filter(musica -> musica.getTrack_artist().equalsIgnoreCase(artist))
@@ -43,9 +42,9 @@ public class MusicaDomainServiceImpl implements IMusicaDomainService {
         List<Musica> musicasDistintas = musicaPorArtista.values().stream().toList();
 
         List<String> artist = new ArrayList<>();
-        musicasDistintas.forEach(musica -> {
+        for (Musica musica : musicasDistintas) {
             artist.add(musica.getTrack_artist());
-        });
+        }
         return artist;
     }
 
@@ -57,6 +56,22 @@ public class MusicaDomainServiceImpl implements IMusicaDomainService {
                 .filter(musica -> musica.getTrack_name().equalsIgnoreCase(name))
                 .toList();
 
+    }
+
+    @Override
+    public Optional<Integer> findNumberTotalMusica() {
+        log.info("Obteniendo el total de canciones");
+        return  Optional.of((int) leerFuncional.getMusicas()
+                .stream()
+                .count());
+    }
+
+    @Override
+    public Optional<Integer> findNumberTotalMusicaByArtist(String name) {
+        log.info("Obteniendo el total de canciones por artista: [{}]", name);
+        return Optional.of((int) findAllMusicaByArtist(name)
+                .stream()
+                .count());
     }
 
 }

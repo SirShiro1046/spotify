@@ -5,10 +5,10 @@ import com.example.spotify.persistence.entities.Musica;
 import lombok.Getter;
 import java.util.List;
 public class LeerFuncional {
-    IMusicaRepository csvReader = new CsvReader("src/main/java/com/example/spotify/archivos/spotify_songs.csv");
+    private final IMusicaRepository csvReader = new CsvReader("src/main/java/com/example/spotify/archivos/spotify_songs.csv");
     private final IMusicaRepository musicaRepository = csvReader;
     @Getter
-    List<Musica> musicas = musicaRepository.findAllMusicas();
+    private final List<Musica> musicas = musicaRepository.findAllMusicas();
     public LeerFuncional(){
     }
 

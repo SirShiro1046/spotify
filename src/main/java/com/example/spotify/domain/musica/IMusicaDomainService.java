@@ -8,5 +8,7 @@ public interface IMusicaDomainService {
     List<Musica> findAllMusica();
     List<Musica> findAllMusicaByArtist(String artist);
     List<String> findAllArtist();
-    List<Musica >findMusicaByName(String music);
+    List<Musica> findMusicaByName(String music);
+    Optional<Integer> findNumberTotalMusica();
+    Optional<Integer> findNumberTotalMusicaByArtist(String name);
 }
