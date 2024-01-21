@@ -4,13 +4,15 @@ import com.example.spotify.interfaces.IMusicaRepository;
 import com.example.spotify.persistence.entities.Musica;
 import com.opencsv.CSVReader;
 import com.opencsv.exceptions.CsvException;
+import lombok.extern.log4j.Log4j2;
+
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
-
+@Log4j2
 public class CsvReader implements IMusicaRepository {
     private final String ruta;
 
@@ -19,6 +21,7 @@ public class CsvReader implements IMusicaRepository {
     }
 
     private Musica mapearMusica(String[] campos) {
+
         String track_id = campos[0];
         String track_name= campos[1];
         String track_artist=campos[2];
@@ -52,6 +55,7 @@ public class CsvReader implements IMusicaRepository {
 
     @Override
     public List<Musica> findAllMusicas() {
+        log.info("Obteniendo todas las canciones");
         Path path = Path.of(ruta);
         try (CSVReader reader = new CSVReader(new FileReader(path.toString()))) {
             List<String[]> lines = reader.readAll();
