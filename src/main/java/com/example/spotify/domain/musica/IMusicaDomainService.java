@@ -19,4 +19,5 @@ public interface IMusicaDomainService {
     List<String> findAllGenre();
     Optional<Integer> findNumberTotalGenre();
     List<Musica> find10MostPopularMusica();
+    Optional<Integer> findTotalGenreByArtista(String nameArtista);
 }

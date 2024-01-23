@@ -147,4 +147,15 @@ public class MusicaDomainServiceImpl implements IMusicaDomainService {
                 .sorted(Comparator.comparing(Musica::getTrack_popularity).reversed()).limit(10).toList();
     }
 
+    @Override
+    public Optional<Integer> findTotalGenreByArtista(String nameArtista) {
+        log.info("Buscando cantidad de generos que tiene un artista [{}]",nameArtista);
+        Map<String,Musica> musicaPorGenero = findAllMusicaByArtist(nameArtista).stream()
+                .collect(Collectors.toMap(Musica::getPlaylist_genre,
+                        Function.identity(),(existing,replacement)->existing));
+
+        return Optional.of((int)musicaPorGenero.values().stream().count()) ;
+       
+    }
+
 }

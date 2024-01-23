@@ -146,6 +146,13 @@ public class MusicaController {
                 .orElseGet(ResponseEntity.notFound()::build);
     }
 
-    // total de generos que tiene un artista
+    // total de generos que tiene un artista espeficio
+    @GetMapping("/genero/total/{artist}")
+    public ResponseEntity<Integer>findTotalGenreByArtista(@PathVariable String artist){
+        log.info("Obteniendo total de generos que tiene un artista");
+        return iMusicaDomainService.findTotalGenreByArtista(artist)
+        .map(ResponseEntity::ok)
+        .orElseGet(ResponseEntity.notFound()::build);
+    }
 
 }
