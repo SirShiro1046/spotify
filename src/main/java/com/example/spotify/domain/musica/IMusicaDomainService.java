@@ -11,4 +11,12 @@ public interface IMusicaDomainService {
     List<Musica> findMusicaByName(String music);
     Optional<Integer> findNumberTotalMusica();
     Optional<Integer> findNumberTotalMusicaByArtist(String name);
+    Optional<Integer> findNumberTotalArtist();
+    List<Musica> findAllMusicaByPopularity(Double popularity);
+    List<Musica> findAllMusicaByDuration_ms(Double duration_ms);
+    Optional<Musica> findMusicaEnergy();
+    Optional<Musica> findMusicaPopularity();
+    List<String> findAllGenre();
+    Optional<Integer> findNumberTotalGenre();
+    List<Musica> find10MostPopularMusica();
 }
