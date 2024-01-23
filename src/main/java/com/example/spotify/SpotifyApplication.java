@@ -1,8 +1,5 @@
 package com.example.spotify;
 
-import com.example.spotify.clases.CsvReader;
-import com.example.spotify.clases.LeerFuncional;
-import com.example.spotify.interfaces.IMusicaRepository;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
