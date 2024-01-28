@@ -20,4 +20,9 @@ public interface IMusicaDomainService {
     Optional<Integer> findNumberTotalGenre();
     List<Musica> find10MostPopularMusica();
     Optional<Integer> findTotalGenreByArtista(String nameArtista);
+    Optional<Musica> findMusicSpecificOfArtist(String musicaName);
+    List<String> findAllAlbums();
+    List<Musica> findAllMusicVoiceOff();
+    Optional<Musica> findMusicPopularityByArtist(String artist);
+    List<Musica> findAllMusicByRangeTempo(Double [] tempo);
 }

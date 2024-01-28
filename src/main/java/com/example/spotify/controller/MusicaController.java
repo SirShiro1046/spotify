@@ -5,10 +5,8 @@ import com.example.spotify.persistence.entities.Musica;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -154,5 +152,51 @@ public class MusicaController {
         .map(ResponseEntity::ok)
         .orElseGet(ResponseEntity.notFound()::build);
     }
+
+    // musica especifica de artista especifico
+    @GetMapping("musica/artists/{musicaName}")
+    public ResponseEntity<Musica> findMusicSpecificOfArtist(@PathVariable String musicaName){
+        log.info("Buscando musica especifica de con nombre y artista [{}]",musicaName);
+        return iMusicaDomainService.findMusicSpecificOfArtist(musicaName)
+               .map(ResponseEntity::ok)
+               .orElseGet(ResponseEntity.notFound()::build);
+    }
+    //lista de todos los albums
+    @GetMapping("/album")
+    public ResponseEntity<List<String>> findAllAlbums(){
+        log.info("Obteniendo todos los albums");
+        return Optional
+               .of(iMusicaDomainService.findAllAlbums())
+               .map(ResponseEntity::ok)
+               .orElseGet(ResponseEntity.notFound()::build);
+    }
+    //todas las canciones que no conntienen voces
+    @GetMapping("/musica/voiceoff")
+    public ResponseEntity<List<Musica>> findAllMusicVoiceOff(){
+        log.info("Obteniendo todas las canciones que no conntienen voces");
+        return Optional
+              .of(iMusicaDomainService.findAllMusicVoiceOff())
+              .map(ResponseEntity::ok)
+              .orElseGet(ResponseEntity.notFound()::build);
+    }
+    // cancion mas popular de un artista especifico
+    @GetMapping("/musica/artist/popularity/{artist}")
+    public ResponseEntity<Musica> findMusicPopularityByArtist(@PathVariable String artist){
+        log.info("Buscando cancion mas popular de un artista [{}]", artist);
+        return iMusicaDomainService.findMusicPopularityByArtist(artist)
+              .map(ResponseEntity::ok)
+              .orElseGet(ResponseEntity.notFound()::build);
+    }
+    // canciones con tempo entre unos valores
+    @GetMapping("/musica/rangetempo")
+    public ResponseEntity<List<Musica>> findMusicByRangeTempo(@RequestBody Double[] tempo){
+        log.info("Obteniendo todas las canciones con un rango de tempo [{}]", tempo);
+        return Optional
+              .of(iMusicaDomainService.findAllMusicByRangeTempo(tempo))
+              .map(ResponseEntity::ok)
+              .orElseGet(ResponseEntity.notFound()::build);
+    }
+
+
 
 }

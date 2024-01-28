@@ -100,8 +100,8 @@ public class MusicaDomainServiceImpl implements IMusicaDomainService {
 
     @Override
     public Optional<Musica> findMusicaEnergy() {
-        Optional<Musica> musica;
-        return musica = leerFuncional.getMusicas()
+        log.info("Obteniendo la cancion con mayor energia");
+        return  leerFuncional.getMusicas()
                 .stream()
                 .sorted(Comparator.comparing(Musica::getEnergy).reversed())
                 .findFirst();
@@ -109,8 +109,8 @@ public class MusicaDomainServiceImpl implements IMusicaDomainService {
 
     @Override
     public Optional<Musica> findMusicaPopularity() {
-        Optional<Musica> musica;
-        return musica = leerFuncional.getMusicas()
+        log.info("Obteniendo la cancion mas popular");
+        return leerFuncional.getMusicas()
                 .stream()
                 .sorted(Comparator.comparing(Musica::getTrack_popularity).reversed())
                 .findFirst();
@@ -119,13 +119,10 @@ public class MusicaDomainServiceImpl implements IMusicaDomainService {
     @Override
     public List<String> findAllGenre() {
         log.info("Obteniendo todos los generos");
-        List<Musica> musicaList = leerFuncional.getMusicas();
 
-        Map<String,Musica> musicaPorGenero = musicaList.stream()
+        List<Musica> musicasDistintas = leerFuncional.getMusicas().stream()
                 .collect(Collectors.toMap(Musica::getPlaylist_genre,
-                        Function.identity(),(existing,replacement)->existing));
-
-        List<Musica> musicasDistintas = musicaPorGenero.values().stream().toList();
+                        Function.identity(),(existing,replacement)->existing)).values().stream().toList();
 
         List<String> generos = new ArrayList<>();
         for (Musica musica : musicasDistintas) {
@@ -157,5 +154,61 @@ public class MusicaDomainServiceImpl implements IMusicaDomainService {
         return Optional.of((int)musicaPorGenero.values().stream().count()) ;
        
     }
+
+    @Override
+    public Optional<Musica> findMusicSpecificOfArtist(String musicaName) {
+        log.info("Buscando musica especifica de con nombre y artista [{}]",musicaName);
+        return  leerFuncional.getMusicas()
+                .stream()
+                .filter(musica -> (musica.getTrack_name()+" "+musica.getTrack_artist()).equalsIgnoreCase(musicaName) || (musica.getTrack_artist()+" "+musica.getTrack_name()).equalsIgnoreCase(musicaName) )
+                .findFirst();
+    }
+
+    @Override
+    public List<String> findAllAlbums() {
+        log.info("Obteniendo todos los generos");
+
+        List<Musica> musicasDistintas = leerFuncional.getMusicas().stream()
+                .collect(Collectors.toMap(Musica::getTrack_album_name,
+                        Function.identity(),(existing,replacement)->existing)).values().stream().toList();
+
+        List<String> album = new ArrayList<>();
+        for (Musica musica : musicasDistintas) {
+            album.add(musica.getTrack_album_name());
+        }
+        return album;
+
+    }
+
+    @Override
+    public List<Musica> findAllMusicVoiceOff() {
+        log.info("Obtenendo lista de canciones que no muy probablemente no contengan voces");
+
+        return leerFuncional.getMusicas()
+                .stream()
+                .filter(musica -> musica.getInstrumentalness()>=0.5)
+                .toList();
+    }
+
+    @Override
+    public Optional<Musica> findMusicPopularityByArtist(String artist) {
+        log.info("Buscando cancion mas popular de un artista: [{}]", artist);
+        return leerFuncional.getMusicas()
+                .stream()
+                .filter(musica -> musica.getTrack_artist().equalsIgnoreCase(artist))
+                .sorted(Comparator.comparing(Musica::getTrack_popularity).reversed())
+                .findFirst();
+    }
+
+    @Override
+    public List<Musica> findAllMusicByRangeTempo(Double[] tempo) {
+        log.info("Obteniendo canciones con tempos entre: [{}] y [{}]",tempo[0],tempo[1]);
+        return leerFuncional.getMusicas()
+                .stream()
+                .filter(musica -> musica.getTempo() >= tempo[0] && musica.getTempo() <= tempo[1])
+                .toList();
+    }
+
+
 
 }
