@@ -154,7 +154,8 @@ public class MusicaDomainServiceImpl implements IMusicaDomainService {
         log.info("Buscando musica especifica de con nombre y artista [{}]",musicaName);
         return  leerFuncional.getMusicas()
                 .stream()
-                .filter(musica -> (musica.getTrack_name()+" "+musica.getTrack_artist()).equalsIgnoreCase(musicaName) || (musica.getTrack_artist()+" "+musica.getTrack_name()).equalsIgnoreCase(musicaName) )
+                .filter(musica -> (musica.getTrack_name()+" "+musica.getTrack_artist()).equalsIgnoreCase(musicaName) ||
+                        (musica.getTrack_artist()+" "+musica.getTrack_name()).equalsIgnoreCase(musicaName) )
                 .findFirst();
     }
 
@@ -219,6 +220,72 @@ public class MusicaDomainServiceImpl implements IMusicaDomainService {
         return findAllMusicaByArtist(artist)
                 .stream().max(Comparator.comparingDouble(Musica::getDuration_ms));
     }
+
+    @Override
+    public List<String> findTheArtistWithTheMostMusic() {
+        log.info("Obteniendo el artista con mayor cantidad de canciones");
+        // Agrupar las canciones por el nombre del artista y contar el número de canciones para cada artista
+        Map<String, Long> conteoCancionesPorArtista = leerFuncional.getMusicas()
+                .stream()
+                .collect(Collectors.groupingBy(Musica::getTrack_artist, Collectors.counting()));
+
+        // Encontrar el artista con más canciones
+        Map.Entry<String, Long> artistaConMasCanciones = conteoCancionesPorArtista
+                .entrySet()
+                .stream()
+                .max(Map.Entry.comparingByValue())
+                .orElse(null);
+
+        // Crear una lista de String con el nombre del artista y el número de canciones
+        if (artistaConMasCanciones != null) {
+            String nombreArtista = artistaConMasCanciones.getKey();
+            long cantidadCanciones = artistaConMasCanciones.getValue();
+
+            return List.of(nombreArtista, String.valueOf(cantidadCanciones));
+        } else {
+            return List.of("", ""); // por si en algun caso no hubiera nada en el csv
+        }
+    }
+
+    @Override
+    public Optional<Musica> findTheMostPopularSongByBenre(String genre) {
+        log.info("Obten la cancion mas popular de un genero [{}]", genre);
+
+        return leerFuncional.getMusicas()
+                .stream()
+                .filter(musica -> musica.getPlaylist_genre().equalsIgnoreCase(genre))
+                .max(Comparator.comparingDouble(Musica::getTrack_popularity));
+    }
+
+    @Override
+    public List<Musica> findSongsWithoutVocalsByArtist(String artist) {
+        log.info("Obteniendo las canciones que no contengan voces de un artista: [{}]", artist);
+        return findAllMusicaByArtist(artist)
+                .stream()
+                .filter(musica -> musica.getInstrumentalness()>=0.5)
+                .toList();
+
+    }
+
+    @Override
+    public List<String> findArtistByMusicVocals() {
+        log.info("Obteniendo el artistas con canciones que no tienen voces");
+
+        List<Musica> musicasDistintas = findAllMusicVoiceOff().stream()
+                .collect(Collectors.toMap(Musica::getTrack_artist,
+                        Function.identity(),(existing,replacement)->existing))
+                .values().stream().toList();
+
+        List<String> artist = new ArrayList<>();
+        for (Musica musica : musicasDistintas) {
+            artist.add(musica.getTrack_artist());
+        }
+        return artist;
+    }
+
+
+
+
 
 
 }

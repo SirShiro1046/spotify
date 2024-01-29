@@ -214,10 +214,43 @@ public class MusicaController {
              .map(ResponseEntity::ok)
              .orElseGet(ResponseEntity.notFound()::build);
     }
+    //artistas con mayor total de canciones
+    @GetMapping("/artist/total_music")
+    public ResponseEntity<List<String>> findTheArtistWithTheMostMusic(){
+        log.info("Obteniendo artistas con mayor total de canciones");
+        return Optional
+               .of(iMusicaDomainService.findTheArtistWithTheMostMusic())
+               .map(ResponseEntity::ok)
+               .orElseGet(ResponseEntity.notFound()::build);
+    }
 
+    // cancion mas popular de un genero especifico
+    @GetMapping("/musica/genre/popularity/{genre}")
+    public ResponseEntity<Musica> findTheMostPopularSongByBenre(@PathVariable String genre){
+        log.info("Buscando cancion mas popular de un genero [{}]", genre);
+        return iMusicaDomainService.findTheMostPopularSongByBenre(genre)
+              .map(ResponseEntity::ok)
+              .orElseGet(ResponseEntity.notFound()::build);
+    }
+    // canciones que no tengan voces por artista
+    @GetMapping("/musica/artist/without_vocals/{artist}")
+    public ResponseEntity<List<Musica>> findSongsWithoutVocalsByArtist(@PathVariable String artist){
+        log.info("Buscando canciones que no tengan voces por artista [{}]", artist);
+        return Optional
+             .of(iMusicaDomainService.findSongsWithoutVocalsByArtist(artist))
+             .map(ResponseEntity::ok)
+             .orElseGet(ResponseEntity.notFound()::build);
+    }
 
-
-
+    // artistas que tengan canciones sin voces
+    @GetMapping("/artist/music_vocalsOff")
+    public ResponseEntity<List<String>> findArtistByMusicVocals(){
+        log.info("Obteniendo artistas que tengan canciones sin voces");
+        return Optional
+              .of(iMusicaDomainService.findArtistByMusicVocals())
+              .map(ResponseEntity::ok)
+              .orElseGet(ResponseEntity.notFound()::build);
+    }
 
 
 

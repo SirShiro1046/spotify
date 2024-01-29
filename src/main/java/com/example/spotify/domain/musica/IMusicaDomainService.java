@@ -27,5 +27,10 @@ public interface IMusicaDomainService {
     List<Musica> findAllMusicByRangeTempo(Double [] tempo);
     Optional<Double> findTotalMinMusicaByArtist(String artist);
     Optional<Musica> findLongestMusicaByArtist(String artist);
+    List<String>findTheArtistWithTheMostMusic();
+    Optional<Musica> findTheMostPopularSongByBenre(String genre);
+    List<Musica> findSongsWithoutVocalsByArtist(String artist);
+    List<String> findArtistByMusicVocals();
+
 
 }
