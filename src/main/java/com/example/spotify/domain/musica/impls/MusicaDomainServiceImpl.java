@@ -23,7 +23,7 @@ public class MusicaDomainServiceImpl implements IMusicaDomainService {
     public List<Musica> findAllMusicaByArtist(String artist) {
         log.info("Buscando todas las canciones de un artista [{}]", artist);
         return leerFuncional.getMusicas()
-                .stream()
+                .stream() //filtramos el con el nombre del artista y usamos equalsIsIgnoreCase para ignorar mayuscular si es que las hay
                 .filter(musica -> musica.getTrack_artist().equalsIgnoreCase(artist))
                 .toList();
     }
@@ -50,7 +50,7 @@ public class MusicaDomainServiceImpl implements IMusicaDomainService {
     public List<Musica> findMusicaByName(String name) {
         log.info("Buscando canciones por nombre: [{}]", name);
         return leerFuncional.getMusicas()
-                .stream()
+                .stream()//filtramos el con el nombre de la cancion y usamos equalsIsIgnoreCase para ignorar mayuscular si es que las hay
                 .filter(musica -> musica.getTrack_name().equalsIgnoreCase(name))
                 .toList();
 
@@ -61,7 +61,7 @@ public class MusicaDomainServiceImpl implements IMusicaDomainService {
         log.info("Obteniendo el total de canciones");
         return  Optional.of((int) leerFuncional.getMusicas()
                 .stream()
-                .count());
+                .count()); // contamos la cantidad de datos, tambine se puso usar size()
     }
 
     @Override
@@ -69,20 +69,22 @@ public class MusicaDomainServiceImpl implements IMusicaDomainService {
         log.info("Obteniendo el total de canciones por artista: [{}]", name);
         return Optional.of((int) findAllMusicaByArtist(name)
                 .stream()
-                .count());
+                .count());// contamos la cantidad de datos, tambine se puso usar size()
     }
 
     @Override
     public Optional<Integer> findNumberTotalArtist() {
         log.info("Obteniendo el total de artistas");
-        return Optional.of((int) findAllArtist().stream().count());
+        return Optional.of((int) findAllArtist()
+                .stream()
+                .count());// contamos la cantidad de datos, tambine se puso usar size()
     }
 
     @Override
     public List<Musica> findAllMusicaByPopularity(Double popularity) {
         log.info("Obteniendo el total de canciones con popularidad mayor a: [{}]",popularity);
         return leerFuncional.getMusicas()
-                .stream()
+                .stream()// filtramos con la condicion de que sea mayor o igual a la variable popularity
                 .filter(musica -> musica.getTrack_popularity() >= popularity)
                 .toList();
     }
@@ -91,7 +93,7 @@ public class MusicaDomainServiceImpl implements IMusicaDomainService {
     public List<Musica> findAllMusicaByDuration_ms(Double duration_ms) {
         log.info("Obteniendo el total de canciones con duracion mayor a: [{}]",duration_ms);
         return leerFuncional.getMusicas()
-                .stream()
+                .stream() // filtramos con la condicion de que sea mayor o igual a la conversion que se hizo de minitos a ms
                 .filter(musica -> musica.getDuration_ms() >= (duration_ms*60*1000))
                 .toList();
     }
@@ -99,28 +101,28 @@ public class MusicaDomainServiceImpl implements IMusicaDomainService {
     @Override
     public Optional<Musica> findMusicaEnergy() {
         log.info("Obteniendo la cancion con mayor energia");
-        return leerFuncional.getMusicas()
+        return leerFuncional.getMusicas() // Optenemos el max con la variable energy
                 .stream().max(Comparator.comparing(Musica::getEnergy));
     }
 
     @Override
     public Optional<Musica> findMusicaPopularity() {
         log.info("Obteniendo la cancion mas popular");
-        return leerFuncional.getMusicas()
+        return leerFuncional.getMusicas() // Optenemos el max con la variable popularity
                 .stream().max(Comparator.comparing(Musica::getTrack_popularity));
     }
 
     @Override
     public List<String> findAllGenre() {
         log.info("Obteniendo todos los generos");
-
+                                        // Agrupamos y convertimos directamente en un lista
         List<Musica> musicasDistintas = leerFuncional.getMusicas().stream()
                 .collect(Collectors.toMap(Musica::getPlaylist_genre,
                         Function.identity(),(existing,replacement)->existing)).values().stream().toList();
 
         List<String> generos = new ArrayList<>();
         for (Musica musica : musicasDistintas) {
-            generos.add(musica.getPlaylist_genre());
+            generos.add(musica.getPlaylist_genre()); // guardamos los datos con un forEach
         }
         return generos;
     }
@@ -128,14 +130,16 @@ public class MusicaDomainServiceImpl implements IMusicaDomainService {
     @Override
     public Optional<Integer> findNumberTotalGenre() {
         log.info("Obteniendo el total de generos");
-        return Optional.of((int) findAllGenre().stream().count());
+        return Optional.of((int) findAllGenre().stream().count()); // contaos los datos
     }
 
     @Override
     public List<Musica> find10MostPopularMusica() {
         return leerFuncional.getMusicas()
                 .stream()
-                .sorted(Comparator.comparing(Musica::getTrack_popularity).reversed()).limit(10).toList();
+                .sorted(Comparator.comparing(Musica::getTrack_popularity) // ordenamos  con la condicion que lo haga con popularidad
+                        .reversed()).limit(10) //invertimos el flujo de datos
+                .toList(); // convertimos en lista
     }
 
     @Override
