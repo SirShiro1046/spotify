@@ -31,6 +31,8 @@ public interface IMusicaDomainService {
     Optional<Musica> findTheMostPopularSongByBenre(String genre);
     List<Musica> findSongsWithoutVocalsByArtist(String artist);
     List<String> findArtistByMusicVocals();
+    Optional<Double> findTotalMinAllMusica();
+
 
 
 }

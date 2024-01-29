@@ -283,7 +283,15 @@ public class MusicaDomainServiceImpl implements IMusicaDomainService {
         return artist;
     }
 
+    @Override
+    public Optional<Double> findTotalMinAllMusica() {
+        log.info("Obteniendo el total de tiempo de música");
 
+        // Suma de la duración total en milisegundos
+        return Optional.of((leerFuncional.getMusicas().stream()
+                .mapToDouble(Musica::getDuration_ms)
+                .sum() / (60.0 * 1000.0))/60); //convertimos a horas
+    }
 
 
 

@@ -153,14 +153,7 @@ public class MusicaController {
         .orElseGet(ResponseEntity.notFound()::build);
     }
 
-    // musica especifica de artista especifico
-    @GetMapping("musica/artists/{musicaName}")
-    public ResponseEntity<Musica> findMusicSpecificOfArtist(@PathVariable String musicaName){
-        log.info("Buscando musica especifica de con nombre y artista [{}]",musicaName);
-        return iMusicaDomainService.findMusicSpecificOfArtist(musicaName)
-               .map(ResponseEntity::ok)
-               .orElseGet(ResponseEntity.notFound()::build);
-    }
+
     //lista de todos los albums
     @GetMapping("/album")
     public ResponseEntity<List<String>> findAllAlbums(){
@@ -187,15 +180,7 @@ public class MusicaController {
               .map(ResponseEntity::ok)
               .orElseGet(ResponseEntity.notFound()::build);
     }
-    // canciones con tempo entre unos valores
-    @GetMapping("/musica/rangetempo")
-    public ResponseEntity<List<Musica>> findMusicByRangeTempo(@RequestBody Double[] tempo){
-        log.info("Obteniendo todas las canciones con un rango de tempo [{}]", tempo);
-        return Optional
-              .of(iMusicaDomainService.findAllMusicByRangeTempo(tempo))
-              .map(ResponseEntity::ok)
-              .orElseGet(ResponseEntity.notFound()::build);
-    }
+
 
     // total de tiempo de musica por artista
     @GetMapping("/musica/total/min/{artist}")
@@ -213,6 +198,15 @@ public class MusicaController {
         return iMusicaDomainService.findLongestMusicaByArtist(artist)
              .map(ResponseEntity::ok)
              .orElseGet(ResponseEntity.notFound()::build);
+    }
+    // canciones que no tengan voces por artista
+    @GetMapping("/musica/artist/without_vocals/{artist}")
+    public ResponseEntity<List<Musica>> findSongsWithoutVocalsByArtist(@PathVariable String artist){
+        log.info("Buscando canciones que no tengan voces por artista [{}]", artist);
+        return Optional
+                .of(iMusicaDomainService.findSongsWithoutVocalsByArtist(artist))
+                .map(ResponseEntity::ok)
+                .orElseGet(ResponseEntity.notFound()::build);
     }
     //artistas con mayor total de canciones
     @GetMapping("/artist/total_music")
@@ -232,15 +226,8 @@ public class MusicaController {
               .map(ResponseEntity::ok)
               .orElseGet(ResponseEntity.notFound()::build);
     }
-    // canciones que no tengan voces por artista
-    @GetMapping("/musica/artist/without_vocals/{artist}")
-    public ResponseEntity<List<Musica>> findSongsWithoutVocalsByArtist(@PathVariable String artist){
-        log.info("Buscando canciones que no tengan voces por artista [{}]", artist);
-        return Optional
-             .of(iMusicaDomainService.findSongsWithoutVocalsByArtist(artist))
-             .map(ResponseEntity::ok)
-             .orElseGet(ResponseEntity.notFound()::build);
-    }
+
+
 
     // artistas que tengan canciones sin voces
     @GetMapping("/artist/music_vocalsOff")
@@ -252,6 +239,29 @@ public class MusicaController {
               .orElseGet(ResponseEntity.notFound()::build);
     }
 
-
-
+    // total de minutos de todas las canciones
+    @GetMapping("/musica/total/min")
+    public ResponseEntity<Double> findTotalMinAllMusica(){
+        log.info("Obteniendo el total de minutos de todas las canciones");
+        return iMusicaDomainService.findTotalMinAllMusica()
+             .map(ResponseEntity::ok)
+             .orElseGet(ResponseEntity.notFound()::build);
+    }
+    // musica especifica de artista especifico
+    @GetMapping("musica/artists/{musicaName}")
+    public ResponseEntity<Musica> findMusicSpecificOfArtist(@PathVariable String musicaName){
+        log.info("Buscando musica especifica de con nombre y artista [{}]",musicaName);
+        return iMusicaDomainService.findMusicSpecificOfArtist(musicaName)
+                .map(ResponseEntity::ok)
+                .orElseGet(ResponseEntity.notFound()::build);
+    }
+    // canciones con tempo entre unos valores
+    @GetMapping("/musica/rangetempo")
+    public ResponseEntity<List<Musica>> findMusicByRangeTempo(@RequestBody Double[] tempo){
+        log.info("Obteniendo todas las canciones con un rango de tempo [{}]", tempo);
+        return Optional
+                .of(iMusicaDomainService.findAllMusicByRangeTempo(tempo))
+                .map(ResponseEntity::ok)
+                .orElseGet(ResponseEntity.notFound()::build);
+    }
 }
