@@ -5,9 +5,7 @@ import com.example.spotify.domain.musica.IMusicaDomainService;
 import com.example.spotify.persistence.entities.Musica;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
-
 import java.util.*;
-
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -101,19 +99,15 @@ public class MusicaDomainServiceImpl implements IMusicaDomainService {
     @Override
     public Optional<Musica> findMusicaEnergy() {
         log.info("Obteniendo la cancion con mayor energia");
-        return  leerFuncional.getMusicas()
-                .stream()
-                .sorted(Comparator.comparing(Musica::getEnergy).reversed())
-                .findFirst();
+        return leerFuncional.getMusicas()
+                .stream().max(Comparator.comparing(Musica::getEnergy));
     }
 
     @Override
     public Optional<Musica> findMusicaPopularity() {
         log.info("Obteniendo la cancion mas popular");
         return leerFuncional.getMusicas()
-                .stream()
-                .sorted(Comparator.comparing(Musica::getTrack_popularity).reversed())
-                .findFirst();
+                .stream().max(Comparator.comparing(Musica::getTrack_popularity));
     }
 
     @Override
@@ -195,9 +189,7 @@ public class MusicaDomainServiceImpl implements IMusicaDomainService {
         log.info("Buscando cancion mas popular de un artista: [{}]", artist);
         return leerFuncional.getMusicas()
                 .stream()
-                .filter(musica -> musica.getTrack_artist().equalsIgnoreCase(artist))
-                .sorted(Comparator.comparing(Musica::getTrack_popularity).reversed())
-                .findFirst();
+                .filter(musica -> musica.getTrack_artist().equalsIgnoreCase(artist)).max(Comparator.comparing(Musica::getTrack_popularity));
     }
 
     @Override
@@ -209,6 +201,24 @@ public class MusicaDomainServiceImpl implements IMusicaDomainService {
                 .toList();
     }
 
+    @Override
+    public Optional<Double> findTotalMinMusicaByArtist(String artist) {
+        log.info("Obteniendo el total de tiempo de música por artista: [{}]", artist);
+
+        // Suma de la duración total en milisegundos
+        return Optional.of(findAllMusicaByArtist(artist).stream()
+                .mapToDouble(Musica::getDuration_ms)
+                .sum() / (60.0 * 1000.0)); //convertimos a minutos
+
+    }
+
+    @Override
+    public Optional<Musica> findLongestMusicaByArtist(String artist) {
+        log.info("Obteniendo la canción más larga de un artista: [{}]", artist);
+
+        return findAllMusicaByArtist(artist)
+                .stream().max(Comparator.comparingDouble(Musica::getDuration_ms));
+    }
 
 
 }

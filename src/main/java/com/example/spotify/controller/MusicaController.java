@@ -19,7 +19,7 @@ public class MusicaController {
     // lista de todas las cancionnes
     @GetMapping
     public ResponseEntity<List<Musica>> findAllMusica(){
-        log.info("Obteniendo primeras diez canciones");
+        log.info("Obteniendo todas las camciones");
         return Optional
                 .of(iMusicaDomainService.findAllMusica())
                 .map(ResponseEntity::ok)
@@ -196,6 +196,28 @@ public class MusicaController {
               .map(ResponseEntity::ok)
               .orElseGet(ResponseEntity.notFound()::build);
     }
+
+    // total de tiempo de musica por artista
+    @GetMapping("/musica/total/min/{artist}")
+    public ResponseEntity<Double> findTotalMinMusicaByArtist(@PathVariable String artist){
+        log.info("Obteniendo el total de minutos de musica por artista [{}]", artist);
+        return iMusicaDomainService.findTotalMinMusicaByArtist(artist)
+              .map(ResponseEntity::ok)
+              .orElseGet(ResponseEntity.notFound()::build);
+    }
+
+    // cancion mas larga de un artista especifico
+    @GetMapping("/musica/artist/longest/{artist}")
+    public ResponseEntity<Musica> findLongestMusicaByArtist(@PathVariable String artist){
+        log.info("Buscando cancion mas larga de un artista [{}]", artist);
+        return iMusicaDomainService.findLongestMusicaByArtist(artist)
+             .map(ResponseEntity::ok)
+             .orElseGet(ResponseEntity.notFound()::build);
+    }
+
+
+
+
 
 
 
