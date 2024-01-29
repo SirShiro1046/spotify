@@ -34,7 +34,7 @@ public class MusicaController {
                 .map(ResponseEntity::ok)
                 .orElseGet(ResponseEntity.notFound()::build);
     }
-    //numero total de artistas
+    //3numero total de artistas
     @GetMapping("/artista/total")
     public ResponseEntity<Integer> findNumberTotalArtist(){
         log.info("Obteniendo el total de artistas");
@@ -43,7 +43,7 @@ public class MusicaController {
                 .orElseGet(ResponseEntity.notFound()::build);
     }
 
-    //Lista de todos los artistas
+    //4Lista de todos los artistas
     @GetMapping("/artist")
     public ResponseEntity<List<String>> findAllArtist(){
         log.info("Obteniendo todos los artistas");
