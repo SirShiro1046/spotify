@@ -22,7 +22,13 @@ public class MusicaDomainServiceImpl implements IMusicaDomainService {
     @Override
     public List<Musica> findAllMusicaByArtist(String artist) {
         log.info("Buscando todas las canciones de un artista [{}]", artist);
-        return leerFuncional.getMusicas()
+        List<Musica> musicaList = leerFuncional.getMusicas();
+
+        Map<String,Musica> musicaPorId = musicaList.stream()
+                .collect(Collectors.toMap(Musica::getTrack_id,
+                        Function.identity(),(existing,replacement)->existing));
+        List<Musica> musicasDistintas = musicaPorId.values().stream().toList();
+        return musicasDistintas
                 .stream() //filtramos el con el nombre del artista y usamos equalsIsIgnoreCase para ignorar mayuscular si es que las hay
                 .filter(musica -> musica.getTrack_artist().equalsIgnoreCase(artist))
                 .toList();
@@ -33,23 +39,26 @@ public class MusicaDomainServiceImpl implements IMusicaDomainService {
         log.info("Obteniendo artistas");
         List<Musica> musicaList = leerFuncional.getMusicas();
 
-        Map<String,Musica> musicaPorArtista = musicaList.stream()
-                .collect(Collectors.toMap(Musica::getTrack_artist,
-                        Function.identity(),(existing,replacement)->existing));
+        Map<String, Long> artistCountMap = musicaList.stream()
+                .collect(Collectors.groupingBy(Musica::getTrack_artist, Collectors.counting()));
 
-        List<Musica> musicasDistintas = musicaPorArtista.values().stream().toList();
-
-        List<String> artist = new ArrayList<>();
-        for (Musica musica : musicasDistintas) {
-            artist.add(musica.getTrack_artist());
-        }
-        return artist;
+        return artistCountMap.entrySet().stream()
+                .map(entry -> entry.getKey() + "|" + entry.getValue())
+                .toList();
     }
+
 
     @Override
     public List<Musica> findMusicaByName(String name) {
         log.info("Buscando canciones por nombre: [{}]", name);
-        return leerFuncional.getMusicas()
+        List<Musica> musicaList = leerFuncional.getMusicas();
+
+        Map<String,Musica> musicaPorId = musicaList.stream()
+                .collect(Collectors.toMap(Musica::getTrack_id,
+                        Function.identity(),(existing,replacement)->existing));
+
+        List<Musica> musicasDistintas = musicaPorId.values().stream().toList();
+        return musicasDistintas
                 .stream()//filtramos el con el nombre de la cancion y usamos equalsIsIgnoreCase para ignorar mayuscular si es que las hay
                 .filter(musica -> musica.getTrack_name().equalsIgnoreCase(name))
                 .toList();
@@ -135,7 +144,13 @@ public class MusicaDomainServiceImpl implements IMusicaDomainService {
 
     @Override
     public List<Musica> find10MostPopularMusica() {
-        return leerFuncional.getMusicas()
+        List<Musica> musicaList = leerFuncional.getMusicas();
+
+        Map<String,Musica> musicaPorId = musicaList.stream()
+                .collect(Collectors.toMap(Musica::getTrack_id,
+                        Function.identity(),(existing,replacement)->existing));
+        List<Musica> musicasDistintas = musicaPorId.values().stream().toList();
+        return musicasDistintas
                 .stream()
                 .sorted(Comparator.comparing(Musica::getTrack_popularity) // ordenamos  con la condicion que lo haga con popularidad
                         .reversed()).limit(10) //invertimos el flujo de datos
@@ -154,13 +169,14 @@ public class MusicaDomainServiceImpl implements IMusicaDomainService {
     }
 
     @Override
-    public Optional<Musica> findMusicSpecificOfArtist(String musicaName) {
+    public List<Musica> findMusicSpecificOfArtist(String musicaName) {
         log.info("Buscando musica especifica de con nombre y artista [{}]",musicaName);
         return  leerFuncional.getMusicas()
                 .stream()
                 .filter(musica -> (musica.getTrack_name()+" "+musica.getTrack_artist()).equalsIgnoreCase(musicaName) ||
                         (musica.getTrack_artist()+" "+musica.getTrack_name()).equalsIgnoreCase(musicaName) )
-                .findFirst();
+                .limit(1)
+                .toList();
     }
 
     @Override
@@ -182,8 +198,14 @@ public class MusicaDomainServiceImpl implements IMusicaDomainService {
     @Override
     public List<Musica> findAllMusicVoiceOff() {
         log.info("Obtenendo lista de canciones que no muy probablemente no contengan voces");
+        List<Musica> musicaList = leerFuncional.getMusicas();
 
-        return leerFuncional.getMusicas()
+        Map<String,Musica> musicaPorId = musicaList.stream()
+                .collect(Collectors.toMap(Musica::getTrack_id,
+                        Function.identity(),(existing,replacement)->existing));
+        List<Musica> musicasDistintas = musicaPorId.values().stream().toList();
+
+        return musicasDistintas
                 .stream()
                 .filter(musica -> musica.getInstrumentalness()>=0.5)
                 .toList();

@@ -13,7 +13,9 @@ import java.util.Optional;
 @Log4j2
 @RestController
 @RequiredArgsConstructor
+@CrossOrigin(origins = "http://localhost:4200")
 @RequestMapping("/api/spotify")
+
 public class MusicaController {
     private final IMusicaDomainService iMusicaDomainService;
     // lista de todas las cancionnes
@@ -249,9 +251,9 @@ public class MusicaController {
     }
     // musica especifica de artista especifico
     @GetMapping("musica/artists/{musicaName}")
-    public ResponseEntity<Musica> findMusicSpecificOfArtist(@PathVariable String musicaName){
+    public ResponseEntity<List<Musica>> findMusicSpecificOfArtist(@PathVariable String musicaName){
         log.info("Buscando musica especifica de con nombre y artista [{}]",musicaName);
-        return iMusicaDomainService.findMusicSpecificOfArtist(musicaName)
+        return Optional.of(iMusicaDomainService.findMusicSpecificOfArtist(musicaName))
                 .map(ResponseEntity::ok)
                 .orElseGet(ResponseEntity.notFound()::build);
     }
